@@ -1,0 +1,17 @@
+
+server:
+  servlet:
+    #context-path: /server-demo
+    encoding:
+      charset: UTF-8
+      enabled: true
+
+spring:
+  profiles:
+    active: @profile.active@
+  application:
+    name: Admin-Backend
+
+
+logging:
+  config:  classpath:dev/log4j2.xml
