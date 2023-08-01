@@ -2,7 +2,7 @@
 <Configuration monitorInterval="30">
     <!--<Configuration status="WARN" monitorInterval="30"> -->
     <properties>
-        <property name="LOG_HOME">./blog-server/blog-server-demo/logs</property>
+        <property name="LOG_HOME">logs</property>
         <property name="PATTERN_CONSOLE">
             %style{[Blog]}{blue} %date  %highlight{%-5level} %style{%pid}{Magenta} --- [%style{%15.15thread}] %style{%-40.40logger{1.}}{Cyan} : %msg%n%style{%throwable}{red}
         </property>
