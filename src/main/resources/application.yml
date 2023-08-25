@@ -14,4 +14,4 @@ spring:
 
 
 logging:
-  config:  classpath:dev/log4j2.xml
+  config:  classpath:log4j2.xml
