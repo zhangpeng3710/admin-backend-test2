@@ -1,7 +1,5 @@
-
 server:
   port: 9090
-
 
 spring:
   datasource:
@@ -27,10 +25,6 @@ spring:
       connection-timeout: 3000
       # 连接测试query
       connection-test-query: SELECT 1
-
-
-
-
 
 springdoc:
   api-docs:
