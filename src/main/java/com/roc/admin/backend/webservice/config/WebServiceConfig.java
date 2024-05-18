@@ -1,9 +1,14 @@
-package com.roc.admin.backend.webservice;
+package com.roc.admin.backend.webservice.config;
 
+import com.roc.admin.backend.webservice.interceptor.WsLogInterceptor;
+import com.roc.admin.backend.webservice.DemoServiceImpl;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
+import org.apache.cxf.phase.Phase;
+import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +26,14 @@ public class WebServiceConfig {
 
     @Autowired
     private DemoServiceImpl demoService;
+
+//    @Bean
+    public ServletRegistrationBean<CXFServlet> cxfServlet() {
+        ServletRegistrationBean<CXFServlet> bean = new ServletRegistrationBean<>();
+        bean.setServlet(new CXFServlet());
+        bean.addUrlMappings("/services");
+        return bean;
+    }
 
     /**
      * Apache CXF 核心架构是以BUS为核心，整合其他组件。
@@ -55,6 +68,7 @@ public class WebServiceConfig {
     @Bean
     public Endpoint endpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), demoService);
+        endpoint.getInInterceptors().add(new WsLogInterceptor(Phase.RECEIVE));
         endpoint.publish("/ws/api");
         return endpoint;
     }
