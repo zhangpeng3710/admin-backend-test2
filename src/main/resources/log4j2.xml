@@ -128,7 +128,7 @@
 <!--            <AppenderRef ref="infoFileAppender" level="info"/>-->
             <AppenderRef ref="errorFileAppender" level="error"/>
             <AppenderRef ref="errorJsonAppender" level="error"/>
-            <AppenderRef ref="userJsonAppender" level="info"/>
+<!--            <AppenderRef ref="userJsonAppender" level="info"/>-->
         </Root>
 
         <!--spring日志-->

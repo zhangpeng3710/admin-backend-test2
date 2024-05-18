@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class FilterRegistry {
+public class FilterRegister {
     @Bean
     public FilterRegistrationBean<LoginFilter> loginFilter() {
         FilterRegistrationBean<LoginFilter> bean = new FilterRegistrationBean<>();
@@ -18,4 +18,5 @@ public class FilterRegistry {
         bean.addUrlPatterns("/*");
         return bean;
     }
+
 }
