@@ -1,5 +1,8 @@
 package com.roc.admin.backend.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
@@ -15,11 +18,15 @@ import java.lang.reflect.Type;
  * @Author: Zhang Peng
  * @Date: 2024/5/18
  */
+@Slf4j
 @RestControllerAdvice
 public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
 
     @Autowired
     HttpServletRequest httpServletRequest;
+
+    @Autowired
+    ObjectMapper mapper;
 
     @Override
     public boolean supports(
@@ -29,6 +36,7 @@ public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
         return true;
     }
 
+    @SneakyThrows
     @Override
     public Object afterBodyRead(
             Object body,
@@ -37,9 +45,13 @@ public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
             Type targetType,
             Class<? extends HttpMessageConverter<?>> converterType) {
 
-        // 打印body内容
-        System.out.println("parameter: " + parameter);
-        System.out.println("body: " + body);
+        String reqBody;
+        if (!(body instanceof String)) {
+            reqBody = mapper.writeValueAsString(body);
+        } else {
+            reqBody = body.toString();
+        }
+        log.info("body: {}", reqBody);
 
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }

@@ -1,5 +1,10 @@
 package com.roc.admin.backend.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roc.admin.backend.constant.ResponseData;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -16,8 +21,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @Author: Zhang Peng
  * @Date: 2024/5/18
  */
+@Slf4j
 @RestControllerAdvice
 public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object> {
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Override
     public boolean supports(MethodParameter methodParameter,
@@ -25,6 +34,7 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
         return true;
     }
 
+    @SneakyThrows
     @Override
     public Object beforeBodyWrite(
             Object body,
@@ -34,17 +44,15 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
             @NonNull ServerHttpRequest request,
             @NonNull ServerHttpResponse response
     ) {
-        assert body != null;
-        System.out.println("body: " + body);
 
-
-        if (request instanceof ServletServerHttpRequest &&
-                response instanceof ServletServerHttpResponse) {
-            // 打印响应body
-            System.out.println("CustomResponseBodyAdviceAdapter");
+        if (body instanceof String) {
+            return mapper.writeValueAsString(ResponseData.success(body));
         }
+        if (body instanceof ResponseData) {
+            return body;
+        }
+        return ResponseData.fail(body);
 
-        return body;
     }
 
 
