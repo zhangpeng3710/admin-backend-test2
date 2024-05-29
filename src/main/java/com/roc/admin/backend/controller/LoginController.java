@@ -7,13 +7,9 @@ import com.roc.admin.backend.dao.entity.RbacUser;
 import com.roc.admin.backend.dao.service.IRbacUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * @Description
@@ -47,5 +43,15 @@ public class LoginController {
     public String test() {
         return "test";
     }
-    
+
+    @GetMapping(value = "/test")
+    public String test1() {
+        return "test1";
+    }
+
+    @PostMapping(value = "/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "log out";
+    }
 }
