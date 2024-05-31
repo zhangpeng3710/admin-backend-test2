@@ -5,6 +5,7 @@ import com.roc.admin.backend.constant.ResponseCode;
 import com.roc.admin.backend.constant.ResponseData;
 import com.roc.admin.backend.dao.entity.RbacUser;
 import com.roc.admin.backend.dao.service.IRbacUserService;
+import com.roc.admin.backend.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class LoginController {
     private IRbacUserService userService;
 
     @PostMapping(value = "/sessionDemo")
-    public ResponseData<Object> login(HttpServletRequest request, @RequestBody RbacUser user) {
+    public ResponseData<Object> sessionLogin(HttpServletRequest request, @RequestBody RbacUser user) {
         LambdaQueryWrapper<RbacUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RbacUser::getUserEmail, user.getUserEmail());
         RbacUser userFromDb = userService.getOne(queryWrapper, true);
@@ -33,6 +34,20 @@ public class LoginController {
         if (userFromDb != null && userFromDb.getUserPasswd().equals(user.getUserPasswd())) {
             request.getSession().setAttribute("user", user);
             return ResponseData.success();
+        } else {
+            return ResponseData.fail(ResponseCode.FAIL);
+        }
+    }
+
+    @PostMapping(value = "/tokenDemo")
+    public ResponseData<Object> tokenLogin(@RequestBody RbacUser user) {
+        LambdaQueryWrapper<RbacUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RbacUser::getUserEmail, user.getUserEmail());
+        RbacUser userFromDb = userService.getOne(queryWrapper, true);
+
+        if (userFromDb != null && userFromDb.getUserPasswd().equals(user.getUserPasswd())) {
+            String token = JWTUtils.getToken(String.valueOf(userFromDb.getUserEmail()));
+            return ResponseData.success(token);
         } else {
             return ResponseData.fail(ResponseCode.FAIL);
         }
