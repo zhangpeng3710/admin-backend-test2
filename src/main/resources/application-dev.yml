@@ -1,7 +1,5 @@
-
 server:
   port: 9001
-
 
 spring:
 #  datasource:
@@ -26,11 +24,10 @@ spring:
       settings:
         web-allow-others: true
 
-
 springdoc:
   api-docs:
     version: openapi_3_0
 
 cxf:
-  path=/service:
+  path: /services
 

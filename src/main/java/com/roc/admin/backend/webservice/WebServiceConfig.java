@@ -37,9 +37,9 @@ public class WebServiceConfig {
 
     /**
      * 此方法作用是改变项目中服务名的前缀名，此处127.0.0.1或者localhost不能访问时，请使用ipconfig查看本机ip来访问
-     * 此方法被注释后, 即不改变前缀名(默认是services), wsdl访问地址为 http://127.0.0.1:8080/services/ws/api?wsdl
-     * 去掉注释后wsdl访问地址为：http://127.0.0.1:8080/soap/ws/api?wsdl
-     * http://127.0.0.1:8080/soap/列出服务列表 或 http://127.0.0.1:8080/soap/ws/api?wsdl 查看实际的服务
+     * 此方法被注释后, 即不改变前缀名(默认是services), wsdl访问地址为 http://127.0.0.1:9001/services/ws/api?wsdl
+     * 去掉注释后wsdl访问地址为：http://127.0.0.1:9001/soap/ws/api?wsdl
+     * http://127.0.0.1:9001/soap/列出服务列表 或 http://127.0.0.1:9001/soap/ws/api?wsdl 查看实际的服务
      * 新建Servlet记得需要在启动类添加注解：@ServletComponentScan
      *
      * 如果启动时出现错误：not loaded because DispatcherServlet Registration found non dispatcher servlet dispatcherServlet
@@ -47,10 +47,14 @@ public class WebServiceConfig {
      * 同时在spring boot2.0.6之后的版本与xcf集成，不需要在定义以下方法，直接在application.properties配置文件中添加：
      * cxf.path=/service（默认是services）
      */
-    //@Bean
-    //public ServletRegistrationBean dispatcherServlet() {
-    //    return new ServletRegistrationBean(new CXFServlet(), "/soap/*");
-    //}
+
+//    @Bean
+//    public ServletRegistrationBean<CXFServlet> cxfServlet() {
+//        ServletRegistrationBean<CXFServlet> bean = new ServletRegistrationBean<>();
+//        bean.setServlet(new CXFServlet());
+//        bean.addUrlMappings("/services/*");
+//        return bean;
+//    }
 
     @Bean
     public Endpoint endpoint() {
