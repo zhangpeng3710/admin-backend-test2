@@ -1,9 +1,14 @@
 package com.roc.admin.backend.webservice;
 
+import com.roc.admin.backend.interceptor.WsInInterceptor;
+import com.roc.admin.backend.interceptor.WsOutInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
+import org.apache.cxf.phase.Phase;
+import org.apache.cxf.transport.servlet.CXFServlet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,7 +42,7 @@ public class WebServiceConfig {
 
     /**
      * 此方法作用是改变项目中服务名的前缀名，此处127.0.0.1或者localhost不能访问时，请使用ipconfig查看本机ip来访问
-     * 此方法被注释后, 即不改变前缀名(默认是services), wsdl访问地址为 http://127.0.0.1:9001/services/ws/api?wsdl
+     * 此方法被注释后, 即不改变前缀名(默认是services), wsdl访问地址为 "http://127.0.0.1:9001/services/ws/api?wsdl"
      * 去掉注释后wsdl访问地址为：http://127.0.0.1:9001/soap/ws/api?wsdl
      * http://127.0.0.1:9001/soap/列出服务列表 或 http://127.0.0.1:9001/soap/ws/api?wsdl 查看实际的服务
      * 新建Servlet记得需要在启动类添加注解：@ServletComponentScan
@@ -48,17 +53,21 @@ public class WebServiceConfig {
      * cxf.path=/service（默认是services）
      */
 
-//    @Bean
-//    public ServletRegistrationBean<CXFServlet> cxfServlet() {
-//        ServletRegistrationBean<CXFServlet> bean = new ServletRegistrationBean<>();
-//        bean.setServlet(new CXFServlet());
-//        bean.addUrlMappings("/services/*");
-//        return bean;
-//    }
+    @Bean
+    public ServletRegistrationBean<CXFServlet> cxfServlet() {
+        ServletRegistrationBean<CXFServlet> bean = new ServletRegistrationBean<>();
+        bean.setServlet(new CXFServlet());
+        bean.addUrlMappings("/services/*");
+        return bean;
+    }
 
     @Bean
     public Endpoint endpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), demoService);
+        // in interceptor, match Phase.RECEIVE, otherwise it do not work
+        endpoint.getInInterceptors().add(new WsInInterceptor(Phase.RECEIVE));
+        // out interceptor, match Phase.SEND, otherwise it do not work
+        endpoint.getOutInterceptors().add(new WsOutInterceptor(Phase.SEND));
         endpoint.publish("/ws/api");
         return endpoint;
     }
