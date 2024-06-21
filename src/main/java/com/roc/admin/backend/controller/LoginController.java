@@ -1,6 +1,7 @@
 package com.roc.admin.backend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.roc.admin.backend.aop.log.OperationRecord;
 import com.roc.admin.backend.constant.ResponseCode;
 import com.roc.admin.backend.constant.ResponseData;
 import com.roc.admin.backend.dao.entity.RbacUser;
@@ -8,7 +9,11 @@ import com.roc.admin.backend.dao.service.IRbacUserService;
 import com.roc.admin.backend.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,8 +30,10 @@ public class LoginController {
     @Autowired
     private IRbacUserService userService;
 
+    @OperationRecord(value = "#user", localVar = "#test('222')")
     @PostMapping(value = "/sessionDemo")
     public ResponseData<Object> sessionLogin(HttpServletRequest request, @RequestBody RbacUser user) {
+        String var = "hhh";
         LambdaQueryWrapper<RbacUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RbacUser::getUserEmail, user.getUserEmail());
         RbacUser userFromDb = userService.getOne(queryWrapper, true);
