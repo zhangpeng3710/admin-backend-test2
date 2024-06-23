@@ -30,10 +30,16 @@ public class LoginController {
     @Autowired
     private IRbacUserService userService;
 
-    @OperationRecord(value = "#user", localVar = "#test('222')")
+    /**
+     * SpEL tips:
+     * if there are more than one variable, use "+" split them, otherwise spel cannot parse
+     * e.g. func = "#test(" + "#user.getUserEmail)", the spel parse it as "test("app@gmail.com")
+     * if you want to add some string, the string should be surrounded by ''
+     * e.g. value = "'user:'+#user.getUserEmail", the spel parse it as "user:app@gmail.com
+     */
+    @OperationRecord(value = "'user:'+#user.getUserEmail", func = "#getUser(" + "#user.getUserEmail)")
     @PostMapping(value = "/sessionDemo")
     public ResponseData<Object> sessionLogin(HttpServletRequest request, @RequestBody RbacUser user) {
-        String var = "hhh";
         LambdaQueryWrapper<RbacUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RbacUser::getUserEmail, user.getUserEmail());
         RbacUser userFromDb = userService.getOne(queryWrapper, true);
