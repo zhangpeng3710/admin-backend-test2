@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -46,11 +44,18 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
     ) {
 
         if (body instanceof String) {
+            // if response is xml, do not convert to json
+            if (((String) body).startsWith("<?xml version=")) {
+                return body;
+            }
+            // default response format is json
             return mapper.writeValueAsString(ResponseData.success(body));
         }
+        // if response is json, do nothing
         if (body instanceof ResponseData) {
             return body;
         }
+        // otherwise, packing with ResponseData
         return ResponseData.fail(body);
 
     }

@@ -1,4 +1,4 @@
-package com.roc.admin.backend.model.entity;
+package com.roc.admin.backend.model.po;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;

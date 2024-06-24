@@ -2,8 +2,8 @@ package com.roc.admin.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.roc.admin.backend.model.entity.XmlRequestDemo;
-import com.roc.admin.backend.model.entity.XmlResponseDemo;
+import com.roc.admin.backend.model.po.XmlRequestDemo;
+import com.roc.admin.backend.model.po.XmlResponseDemo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,7 @@ public class XmlDemoController {
 
     @PostMapping(value = "/xmlDemo", produces = MediaType.APPLICATION_XML_VALUE)
     public String testXml(@RequestBody XmlRequestDemo request) {
-        log.info("personal info: {}", request.getPersonalInfo());
+        log.info("personal info: {}", request.getPersonalInfo().toString());
 
         XmlResponseDemo response = new XmlResponseDemo();
         response.setMsg("ok");
