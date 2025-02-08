@@ -26,8 +26,14 @@ public class XmlDemoController {
     public String testXml(@RequestBody XmlRequestDemo request) {
         log.info("personal info: {}", request.getPersonalInfo().toString());
 
+
         XmlResponseDemo response = new XmlResponseDemo();
+        XmlResponseDemo.Body body = response.new Body();
+        body.setUsername("zhangsan");
+        body.setUserid("010");
         response.setMsg("ok");
+        response.setCode("0");
+        response.setBody(body);
         return javaBeanToXml(response);
 
     }

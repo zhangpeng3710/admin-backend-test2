@@ -14,4 +14,21 @@ import lombok.Data;
 public class XmlResponseDemo {
     @JacksonXmlProperty(localName = "msg")
     private String msg;
+
+    @JacksonXmlProperty(localName = "code")
+    private String code;
+
+    @JacksonXmlProperty(localName = "body")
+    private Body body;
+
+    @Data
+    @JacksonXmlRootElement(localName = "body")
+    public class Body {
+        @JacksonXmlProperty(localName = "name")
+        private String username;
+
+        @JacksonXmlProperty(localName = "id")
+        private String userid;
+    }
+
 }
