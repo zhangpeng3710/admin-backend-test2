@@ -8,5 +8,5 @@ import javax.jws.WebService;
 @WebService(name = "IDemoService", targetNamespace = "http://webservice.backend.admin.roc.com")
 public interface IDemoService {
     @WebMethod
-    String emrService(@WebParam String data);
+    String emrService(@WebParam String data, @WebParam String data2);
 }

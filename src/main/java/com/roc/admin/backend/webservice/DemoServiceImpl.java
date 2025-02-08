@@ -1,6 +1,11 @@
 package com.roc.admin.backend.webservice;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.roc.admin.backend.aop.log.OperationRecord;
+import com.roc.admin.backend.model.po.XmlResponseDemo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.jws.WebParam;
@@ -40,23 +45,32 @@ import javax.jws.WebService;
  * header: 默认是false, 是否将参数放到头信息中，用于保护参数，默认在body中
  * model：WebParam.Mode.IN/OUT/INOUT
  */
+@Slf4j
 @Component
 @WebService(name = "IDemoService",
         targetNamespace = "http://webservice.backend.admin.roc.com",
         endpointInterface = "com.roc.admin.backend.webservice.IDemoService")
 public class DemoServiceImpl implements IDemoService{
 
+    @OperationRecord
     @Override
-    public String emrService(@WebParam String data) {
-//        return "DemoServiceImpl emrService invoked from: " + data;
-        return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://WebXml.com.cn/\">\n" +
-                "<soapenv:Header/>\n" +
-                "<soapenv:Body>\n" +
-                "<web:getChineseFonts>\n" +
-                "<web:byFontsLength>5</web:byFontsLength>\n" +
-                "</web:getChineseFonts>\n" +
-                "</soapenv:Body>\n" +
-                "</soapenv:Envelope>";
+    public String emrService(@WebParam String data, @WebParam String data2) {
+        log.info("data=\n{}", data);
+        XmlResponseDemo response = new XmlResponseDemo();
+        XmlResponseDemo.Body body = response.new Body();
+        body.setUsername("zhangsan");
+        body.setUserid("010");
+        response.setMsg("ok");
+        response.setCode("0");
+        response.setBody(body);
+        XmlMapper xmlMapper = new XmlMapper();
+        String xml;
+        try {
+            xml = xmlMapper.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return xml;
     }
 }
 

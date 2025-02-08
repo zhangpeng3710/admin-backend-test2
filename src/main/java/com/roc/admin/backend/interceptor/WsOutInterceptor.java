@@ -1,5 +1,6 @@
 package com.roc.admin.backend.interceptor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.helpers.IOUtils;
@@ -14,6 +15,7 @@ import java.io.InputStream;
  * @Author: Zhang Peng
  * @Date: 2024/5/18
  */
+@Slf4j
 public class WsOutInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
     public WsOutInterceptor(String phase) {
         super(phase);
@@ -32,7 +34,7 @@ public class WsOutInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
             // 重新写入
             message.setContent(InputStream.class, new ByteArrayInputStream(input.getBytes()));
         } catch (Exception e) {
-            System.out.printf("解析报文异常: %s%n", e.getMessage());
+            log.error("webservice out interceptor handle message failed:{}", e.getMessage());
         }
     }
 }
