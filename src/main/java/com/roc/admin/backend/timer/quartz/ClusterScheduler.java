@@ -1,17 +1,11 @@
 package com.roc.admin.backend.timer.quartz;
 
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.DateBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.SimpleTrigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.quartz.*;
+import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import javax.annotation.Resource;
+import java.util.HashSet;
 
 /**
  * @Description
@@ -19,10 +13,10 @@ import java.util.Date;
  * @Date: 2024/6/16
  */
 @Slf4j
-//@Service
+@Component
 public class ClusterScheduler {
 
-    @Autowired
+    @Resource
     private Scheduler scheduler;
 
     /**
@@ -31,36 +25,55 @@ public class ClusterScheduler {
      * @param bSchedulerNewJob True 创建任务调度，False 集群执行任务调度
      */
     public void run(Boolean bSchedulerNewJob) throws SchedulerException, InterruptedException {
+        cleanScheduler();
+        addOneJobOneTrigger();
+//        addOneJobTwoTrigger();
 
-        if (bSchedulerNewJob) {
-            log.info("clear any existing job scheduler before creating new one.");
-            scheduler.clear();
+    }
 
-            JobDetail job = JobBuilder.newJob(DemoJob.class)
-                    .withIdentity("MyJob", "MyGroup")
-                    .requestRecovery()
-                    .build();
+    public void cleanScheduler() throws SchedulerException {
+        log.info("clear any existing job scheduler before creating new one.");
+        scheduler.clear();
+    }
 
-            SimpleTrigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("MyTrigger", "MyGroup")
-                    .startAt(DateBuilder.evenMinuteDate(new Date()))
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).withRepeatCount(0))
-                    .build();
+    public void addOneJobOneTrigger() throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(DemoJob.class)
+                .withIdentity("MyJob", "OneJob-OneTrigger")
+                .requestRecovery()
+                .build();
 
-            log.info("start new job scheduler.");
-            scheduler.scheduleJob(job, trigger);
+        CronTrigger trigger1 = TriggerBuilder.newTrigger()
+                .withIdentity("MyTrigger", "OneJob-OneTrigger")
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule("0,10,20,30,40,50 * * * * ? "))
+                .build();
 
-        }
-        log.info("start the scheduler.");
-        scheduler.start();
+        scheduler.scheduleJob(job, trigger1);
 
-        log.info("sleeping for scheduler to run job.");
-        Thread.sleep(60L * 1000L);
+    }
 
-        log.info("shutdown the scheduler gracefully.");
-        scheduler.shutdown(true);
-        log.info("the end.");
 
+    public void addOneJobTwoTrigger() throws SchedulerException {
+        JobDetail job = JobBuilder.newJob(DemoJob.class)
+                .withIdentity("MyJob", "OneJob-TwoTrigger")
+                .requestRecovery()
+                .build();
+
+        CronTrigger trigger1 = TriggerBuilder.newTrigger()
+                .withIdentity("MyTrigger1", "OneJob-TwoTrigger")
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule("0,10,20,30,40,50 * * * * ? "))
+                .build();
+        CronTrigger trigger2 = TriggerBuilder.newTrigger()
+                .withIdentity("MyTrigger2", "OneJob-TwoTrigger")
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule("0,20,40 * * * * ? "))
+                .build();
+
+        HashSet<CronTrigger> triggerHash = new HashSet<>();
+        triggerHash.add(trigger1);
+        triggerHash.add(trigger2);
+        scheduler.scheduleJob(job, triggerHash, true);
 
     }
 }

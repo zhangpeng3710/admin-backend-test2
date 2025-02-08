@@ -8,13 +8,13 @@ import com.roc.admin.backend.dao.entity.RbacUser;
 import com.roc.admin.backend.dao.service.IRbacUserService;
 import com.roc.admin.backend.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.omg.CORBA.Object;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -27,8 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/login")
 public class LoginController {
 
-    @Autowired
+    @Resource
     private IRbacUserService userService;
+
 
     /**
      * SpEL tips:
@@ -53,7 +54,7 @@ public class LoginController {
     }
 
     @PostMapping(value = "/tokenDemo")
-    public ResponseData<Object> tokenLogin(@RequestBody RbacUser user) {
+    public ResponseData<String> tokenLogin(@RequestBody RbacUser user) {
         LambdaQueryWrapper<RbacUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RbacUser::getUserEmail, user.getUserEmail());
         RbacUser userFromDb = userService.getOne(queryWrapper, true);
@@ -67,15 +68,12 @@ public class LoginController {
     }
 
 
-    @PostMapping(value = "/test")
-    public String test() {
-        return "test";
+    @PostMapping(value = "/json")
+    public String test(@RequestBody String json) {
+        log.info(json);
+        return json;
     }
 
-    @GetMapping(value = "/test")
-    public String test1() {
-        return "test1";
-    }
 
     @PostMapping(value = "/logout")
     public String logout(HttpServletRequest request) {

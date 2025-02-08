@@ -14,9 +14,14 @@ import java.util.Calendar;
 @Slf4j
 public class DemoJob extends QuartzJobBean {
 
-
     @Override
     protected void executeInternal(JobExecutionContext context) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         log.info("DemoJob开始运行啦！{}", Calendar.getInstance().getTime());
     }
 }
+

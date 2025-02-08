@@ -7,8 +7,8 @@ spring:
     jdbc:
       #first set "always" to init schema, then set "never",
       #otherwise the later running instances will overwrite previous instances.
-      initialize-schema: always
-    #      initialize-schema: never
+      #      initialize-schema: always
+      initialize-schema: never
     properties:
       org:
         quartz:
@@ -16,7 +16,6 @@ spring:
             instanceName: clusteredScheduler
             instanceId: AUTO
           jobStore:
-            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
             isClustered: true
             misfireThreshold: 120000
           threadPool:
